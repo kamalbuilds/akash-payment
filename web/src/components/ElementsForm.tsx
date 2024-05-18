@@ -1,4 +1,4 @@
-"use client";
+
 
 import type { StripeError } from "@stripe/stripe-js";
 
@@ -98,7 +98,7 @@ function CheckoutForm(): JSX.Element {
         elements,
         clientSecret,
         confirmParams: {
-          return_url: `${window.location.origin}/donate-with-elements/result`,
+          return_url: `${window.location.origin}/Deploy-with-elements/result`,
           payment_method_data: {
             billing_details: {
               name: input.cardholderName,
@@ -161,7 +161,7 @@ function CheckoutForm(): JSX.Element {
             !stripe
           }
         >
-          Donate {formatAmountForDisplay(input.customDonation, config.CURRENCY)}
+          Deploy {formatAmountForDisplay(input.customDonation, config.CURRENCY)}
         </button>
       </form>
       <PaymentStatus status={payment.status} />

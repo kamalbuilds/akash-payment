@@ -1,7 +1,7 @@
-import type { Stripe } from "stripe";
+import type { Stripe } from 'stripe';
 
-import PrintObject from "@/components/PrintObject";
-import { stripe } from "@/lib/stripe";
+import PrintObject from '../../../components/PrintObject';
+import { stripe } from '../../../lib/stripe';
 
 export default async function ResultPage({
   searchParams,
@@ -9,11 +9,11 @@ export default async function ResultPage({
   searchParams: { session_id: string };
 }): Promise<JSX.Element> {
   if (!searchParams.session_id)
-    throw new Error("Please provide a valid session_id (`cs_test_...`)");
+    throw new Error('Please provide a valid session_id (`cs_test_...`)');
 
   const checkoutSession: Stripe.Checkout.Session =
     await stripe.checkout.sessions.retrieve(searchParams.session_id, {
-      expand: ["line_items", "payment_intent"],
+      expand: ['line_items', 'payment_intent'],
     });
 
   const paymentIntent = checkoutSession.payment_intent as Stripe.PaymentIntent;

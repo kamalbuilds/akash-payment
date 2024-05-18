@@ -13,6 +13,8 @@ import { useWallet } from './hooks/useWallet';
 import Loading from './components/Loading';
 import { getRpcNode, useRpcNode } from './hooks/useRpcNode';
 import { Alert, Button } from '@mui/material';
+import PaywithFiat from './pages/paywithfiat';
+import DeployPage from './pages/donate-with-checkout/page';
 
 // Lazy loading all pages in appropriate time
 const DeploymentStepper = lazy(() => import('./components/DeploymentStepper'));
@@ -82,6 +84,8 @@ const AppRouter = () => {
               <Route path="custom-sdl" element={<CustomApp />} />
               <Route path="custom-sdl/:intentId" element={<CustomApp />} />
             </Route>
+            <Route path="/paywithfiat" element={<PaywithFiat />} />
+            <Route path="/Deploy-with-checkout" element={<DeployPage />} />
             <Route path="configure-deployment/:dseq/" element={<DeploymentStepper />} />
             <Route path="provider/:providerId" element={<Provider />} />
             <Route path="my-deployments">

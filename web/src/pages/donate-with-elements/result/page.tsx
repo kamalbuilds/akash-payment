@@ -1,7 +1,7 @@
-import type { Stripe } from "stripe";
+import type { Stripe } from 'stripe';
 
-import PrintObject from "@/components/PrintObject";
-import { stripe } from "@/lib/stripe";
+import PrintObject from '../../../components/PrintObject';
+import { stripe } from '../../../lib/stripe';
 
 export default async function ResultPage({
   searchParams,
@@ -9,7 +9,7 @@ export default async function ResultPage({
   searchParams: { payment_intent: string };
 }): Promise<JSX.Element> {
   if (!searchParams.payment_intent)
-    throw new Error("Please provide a valid payment_intent (`pi_...`)");
+    throw new Error('Please provide a valid payment_intent (`pi_...`)');
 
   const paymentIntent: Stripe.PaymentIntent =
     await stripe.paymentIntents.retrieve(searchParams.payment_intent);
