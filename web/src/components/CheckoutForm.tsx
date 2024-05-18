@@ -1,20 +1,19 @@
-"use client";
 
-import type Stripe from "stripe";
+import type Stripe from 'stripe';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import CustomDonationInput from "@/components/CustomDonationInput";
-import StripeTestCards from "@/components/StripeTestCards";
+import CustomDonationInput from '../components/CustomDonationInput';
+import StripeTestCards from '../components/StripeTestCards';
 
-import { formatAmountForDisplay } from "@/utils/stripe-helpers";
-import * as config from "@/config";
-import { createCheckoutSession } from "@/actions/stripe";
-import getStripe from "@/utils/get-stripejs";
+import { formatAmountForDisplay } from '../utils/stripe-helpers';
+import * as config from '../config';
+import { createCheckoutSession } from '../../src/pages/actions/stripe';
+import getStripe from '../utils/get-stripejs';
 import {
   EmbeddedCheckout,
   EmbeddedCheckoutProvider,
-} from "@stripe/react-stripe-js";
+} from '@stripe/react-stripe-js';
 
 interface CheckoutFormProps {
   uiMode: Stripe.Checkout.SessionCreateParams.UiMode;
@@ -37,11 +36,11 @@ export default function CheckoutForm(props: CheckoutFormProps): JSX.Element {
 
   const formAction = async (data: FormData): Promise<void> => {
     const uiMode = data.get(
-      "uiMode",
+      'uiMode',
     ) as Stripe.Checkout.SessionCreateParams.UiMode;
     const { client_secret, url } = await createCheckoutSession(data);
 
-    if (uiMode === "embedded") return setClientSecret(client_secret);
+    if (uiMode === 'embedded') return setClientSecret(client_secret);
 
     window.location.assign(url as string);
   };
@@ -49,10 +48,10 @@ export default function CheckoutForm(props: CheckoutFormProps): JSX.Element {
   return (
     <>
       <form action={formAction}>
-        <input type="hidden" name="uiMode" value={props.uiMode} />
+        <input type='hidden' name='uiMode' value={props.uiMode} />
         <CustomDonationInput
-          className="checkout-style"
-          name="customDonation"
+          className='checkout-style'
+          name='customDonation'
           min={config.MIN_AMOUNT}
           max={config.MAX_AMOUNT}
           step={config.AMOUNT_STEP}
@@ -62,11 +61,11 @@ export default function CheckoutForm(props: CheckoutFormProps): JSX.Element {
         />
         <StripeTestCards />
         <button
-          className="checkout-style-background"
-          type="submit"
+          className='checkout-style-background'
+          type='submit'
           disabled={loading}
         >
-          Donate {formatAmountForDisplay(input.customDonation, config.CURRENCY)}
+          Deploy {formatAmountForDisplay(input.customDonation, config.CURRENCY)}
         </button>
       </form>
       {clientSecret ? (

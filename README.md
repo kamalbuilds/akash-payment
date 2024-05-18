@@ -1,49 +1,104 @@
-# Akash Console - Web UI deployment tool for Akash Network
+# Akashfiatgateway
 
-Akash Console is an easy to use deployment tool for deploying workloads on to Akash Network providers. It is an alternative to the Command Line Interface (CLI). Akash Console can be run as a hosted service or locally (for development). Overclock Labs (creators of Akash Network) run an instance of Akash Console at https://console.akash.network/.
+Implementing Stripe Payments with Akash payments gateway.
 
-<p align="center">
-  <img src="_doc/../_docs/dev-readme-screencap.png" width="700">
-</p>
+An open-source fiat payment system that seamlessly integrates with the Akash Network ecosystem. While decentralized finance (DeFi) has gained significant traction, enabling fiat payments remains a critical bridge between traditional financial systems and blockchain-based networks. 
 
-## Contributing
+- Contributes to enhancing accessibility, usability, and adoption of the Akash Network.
 
-If you would like to contribute to Akash Console, here are some ways to do so:
+* Features:
 
-1. Beta test the [public facing app](https://console.akash.network/) and [report issues](https://github.com/akash-network/console/issues).
-2. Read up on [Akash Console Strategy & Roadmap doc](strategy-roadmap.md)
-3. Run it locally (instructions below) to get acquainted with the application.
-4. Review the project board at https://github.com/orgs/akash-network/projects/2/ and comment on any issue that you wish to work on.
-5. Join the [Akash Networks Clients SIG](https://github.com/akash-network/community/tree/main/sig-clients) meetings to learn about other issues or features you can help build.
-6. Reach out to anil [at] akash.network to get access to our discord channel for Console OSS devs
+Fiat Payment Gateway Integration: A fiat payment gateway that allows users to purchase and manage Akash Network services using traditional fiat currencies (e.g., USD, EUR, GBP). We have integrated popular payment methods (e.g., credit/debit cards, bank transfers) into the payment system to facilitate seamless transactions.
 
-NOTE: If you need AKT for deployment, share your Keplr wallet ID in the comment for the specific issue and we'll drop you 10AKT to test with (should let you test deploys 100s of times)
+## Demo
 
-## Running it locally
 
-Please ensure you have the below set of dependencies installed on your workstation:
+The demo is running in test mode -- use `4242424242424242` as a test card number with any CVC + future expiration date.
 
-* node 18+
-* yarn (1.22.19)
-* concurrently (7.2.2)
-* craco (6.4.4)
+Use the `4000002760003184` test card number to trigger a 3D Secure challenge flow.
 
-You can install dependencies by running
+[Read more](https://stripe.com/docs/testing) about testing on Stripe.
+
+<details><summary>Checkout Donations Demo</summary>
+<img src="./public/checkout_demo.gif" alt="A gif of the Checkout payment page." align="center">
+</details>
+
+<details><summary>Elements Donations Demo</summary>
+<img src="./public/elements_demo.gif" alt="A gif of the custom Elements checkout page." align="center">
+</details>
+
+
+
+## Included functionality
+
+- Stripe Checkout
+  - Custom Amount Donation with redirect to Stripe Checkout:
+    - Server Component: [app/donate-with-checkout/page.tsx](app/donate-with-checkout/page.tsx)
+    - Server Action: [app/actions/stripe.ts](app/actions/stripe.ts)
+    - Checkout Session 'success' page fetches the Checkout Session object from Stripe: [donate-with-checkout/result/page.tsx](app/donate-with-checkout/result/page.tsx)
+- Stripe Elements
+  - Custom Amount Donation with Stripe Payment Element & PaymentIntents:
+    - Server Component: [app/donate-with-elements/page.tsx](app/donate-with-elements/page.tsx)
+    - Server Action: [app/actions/stripe.ts](app/actions/stripe.ts)
+    - Payment Intent 'success' page (via `returl_url`) fetches the Payment Intent object from Stripe: [donate-with-elements/result/page.tsx](app/donate-with-elements/result/page.tsx)
+- Webhook handling for [post-payment events](https://stripe.com/docs/payments/handling-payment-events)
+  - Route Handler: [app/api/webhooks/route.ts](app/api/webhooks/route.ts)
+
+
+### Required configuration
+
+Copy the `.env.local.example` file into a file named `.env.local` in the root directory of this project:
+
+```bash
+cp .env.local.example .env.local
 ```
-npm install -g yarn concurrently craco
+
+You will need a Stripe account ([register](https://dashboard.stripe.com/register)) to run this sample. Go to the Stripe [developer dashboard](https://dashboard.stripe.com/apikeys) to find your API keys and replace them in the `.env.local` file.
+
+```bash
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=<replace-with-your-publishable-key>
+STRIPE_SECRET_KEY=<replace-with-your-secret-key>
 ```
-Then checkout, build and run Console
-```
-git clone https://github.com/akash-network/console.git
-cd console
-yarn install
+
+Now install the dependencies and start the development server.
+
+```bash
+npm install
+npm run dev
+# or
+yarn
 yarn dev
 ```
 
-https://user-images.githubusercontent.com/19495789/222617645-6b2daa48-6b41-4082-98a7-8f7b55ae295c.mp4
+### Forward webhooks to your local dev server
+
+First [install the CLI](https://stripe.com/docs/stripe-cli) and [link your Stripe account](https://stripe.com/docs/stripe-cli#link-account).
+
+Next, start the webhook forwarding:
+
+```bash
+stripe listen --forward-to localhost:3000/api/webhooks
+```
+
+The CLI will print a webhook secret key to the console. Set `STRIPE_WEBHOOK_SECRET` to this value in your `.env.local` file.
+
+### Setting up a live webhook endpoint
+
+After deploying, copy the deployment URL with the webhook path (`https://your-url.vercel.app/api/webhooks`) and create a live webhook endpoint [in your Stripe dashboard](https://stripe.com/docs/webhooks/setup#configure-webhook-settings).
+
+Once created, you can click to reveal your webhook's signing secret. Copy the webhook secret (`whsec_***`) and add it as a new environment variable in your [Vercel Dashboard](https://vercel.com/dashboard):
+
+- Select your newly created project.
+- Navigate to the Settings tab.
+- In the general settings scroll to the "Environment Variables" section.
+
+After adding an environment variable you will need to rebuild your project for it to become within your code. Within your project Dashboard, navigate to the "Deployments" tab, select the most recent deployment, click the overflow menu button (next to the "Visit" button) and select "Redeploy".
+
+### Deploy on Vercel
+
+You can deploy this app to the cloud with [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
 
 
-Note for MacOS
+## Authors
 
-If you see errors regarding port 5000 being in use, this is due to AirPlay
-using the port. You can disable this service in the MacOS Sharing settings.
+- [@0xkamal7](https://twitter.com/0xkamal7)

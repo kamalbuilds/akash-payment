@@ -1,4 +1,4 @@
-import { formatAmountForDisplay } from "@/utils/stripe-helpers";
+import { formatAmountForDisplay } from '../utils/stripe-helpers';
 
 export default function CustomDonationInput({
   name,
@@ -24,7 +24,7 @@ export default function CustomDonationInput({
       Custom donation amount ({formatAmountForDisplay(min, currency)}-
       {formatAmountForDisplay(max, currency)}):
       <input
-        type="range"
+        type='range'
         name={name}
         min={min}
         max={max}
